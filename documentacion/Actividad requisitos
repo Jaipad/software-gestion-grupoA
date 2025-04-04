@@ -1,0 +1,82 @@
+Requerimientos del Sistema
+1. Gestión de Profesores
+
+El sistema debe permitir la administración de los profesores del Instituto de Obras Civiles, incluyendo:
+
+    Registro de nuevos profesores con información personal y académica.
+
+    Edición y actualización de datos de los profesores.
+
+    Eliminación de profesores cuando ya no formen parte del instituto.
+
+    Listado de todos los profesores registrados en el sistema.
+
+2. Gestión de Asignaturas
+
+El sistema debe proporcionar una interfaz para gestionar las asignaturas que se imparten en el instituto, permitiendo:
+
+    Registro de nuevas asignaturas con detalles como nombre, código, cantidad de créditos y semestre correspondiente.
+
+    Modificación de la información de las asignaturas.
+
+    Eliminación de asignaturas que ya no sean parte del plan de estudios.
+
+    Visualización de todas las asignaturas disponibles.
+
+3. Asignación de Asignaturas
+
+El sistema debe permitir la asignación de asignaturas a profesores, asegurando:
+
+    Que un profesor pueda ser asignado a una o varias asignaturas.
+
+    Que cada asignatura tenga al menos un profesor asignado.
+
+    Que se puedan realizar cambios en la asignación de profesores a lo largo del semestre.
+
+4. Creación de Informes de Gestión
+
+El sistema debe generar informes detallados sobre la gestión académica del instituto, incluyendo:
+
+    Listados de profesores y sus asignaciones.
+
+    Informe de asignaturas ofrecidas por semestre.
+
+    Registro de cambios en asignaciones de profesores.
+
+    Resumen de la carga académica de cada profesor.
+
+Requisitos Funcionales
+1. Filtro de Asignaturas por Semestre
+
+El sistema debe permitir a los usuarios filtrar la lista de asignaturas según el semestre en el que se imparten.
+2. Filtro de Profesores
+
+El sistema debe permitir la búsqueda y filtrado de profesores según diferentes criterios, como nombre, especialidad o asignaturas asignadas.
+Requisitos No Funcionales
+1. Usabilidad
+
+    La interfaz de usuario debe ser intuitiva y fácil de navegar.
+
+    Debe seguir buenas prácticas de accesibilidad para garantizar que cualquier usuario pueda utilizarla sin dificultades.
+
+    Los procesos de registro y gestión deben ser sencillos y rápidos.
+
+2. Eficiencia
+
+    El sistema debe responder en menos de 3 segundos al ejecutar operaciones críticas como la asignación de materias y generación de informes.
+
+    La base de datos debe estar optimizada para manejar grandes volúmenes de datos sin afectar el rendimiento.
+
+    Debe poder soportar al menos 500 usuarios concurrentes sin degradación del servicio.
+
+Modelo Arquitectónico: Monolito
+
+El sistema será desarrollado bajo una arquitectura monolítica, lo que implica que:
+
+    Todas las funcionalidades estarán integradas dentro de una única aplicación.
+
+    La lógica del negocio, la interfaz de usuario y la base de datos estarán dentro de un solo entorno de ejecución.
+
+    Será más sencillo de desarrollar y mantener en la fase inicial del proyecto.
+
+    Se utilizará un framework como Next.js para el desarrollo del frontend y un backend basado en Node.js con PostgreSQL para la gestión de datos.
