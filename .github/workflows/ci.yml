@@ -1,18 +1,53 @@
-name: Docker Image CI
+name: CI - Build and Test with Selenium
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
-
-  build:
-
+  build-test:
     runs-on: ubuntu-latest
 
+    services:
+      selenium:
+        image: selenium/standalone-chrome:latest
+        ports:
+          - 4444:4444
+
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Compose
+      run: docker compose version
+
+    - name: Build and start containers
+      run: docker compose up -d --build
+
+    - name: Esperar que la aplicación esté arriba
+      run: |
+        for i in {1..30}; do
+          if curl -s http://localhost:3004/ > /dev/null; then
+            echo "✅ Aplicación levantada"
+            break
+          fi
+          echo "⏳ Esperando... intento $i"
+          sleep 5
+        done
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install selenium webdriver-manager
+
+    - name: Run Selenium test - iniciar sesion
+      run: python Pruebas_automatizadas/iniciarsesion.py
+
+    - name: Run Selenium test - agregar docente
+      run: python Pruebas_automatizadas/Prueba_AgregarDocente.py
+
+    - name: Tear down containers
+      if: always()
+      run: docker compose down
