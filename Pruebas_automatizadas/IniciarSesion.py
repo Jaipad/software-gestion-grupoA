@@ -1,39 +1,36 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+import tempfile
+import shutil
 import time
 
-# Configuración del navegador
 options = webdriver.ChromeOptions()
-options.add_argument("--start-maximized")  # abrir pantalla completa (opcional)
+options.add_argument("--start-maximized")
+options.add_argument("--headless=new")  # modo headless para evitar problemas en CI
+options.add_argument("--disable-gpu")
 
-# Inicializa el navegador
+temp_profile = tempfile.mkdtemp()
+options.add_argument(f"--user-data-dir={temp_profile}")
+
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 try:
-    # 1. Ir al inicio
     driver.get("http://localhost:3004/")
-    time.sleep(1)  # espera para que cargue
-
-    # 2. Ir directamente al login
+    time.sleep(1)
     driver.get("http://localhost:3004/login")
     time.sleep(1)
 
-    # 3. Ingresar email
     email_input = driver.find_element(By.NAME, "email")
     email_input.send_keys("admin1@uach.cl")
 
-    # 4. Ingresar contraseña
     password_input = driver.find_element(By.NAME, "password")
     password_input.send_keys("ADMIN123")
 
-    # 5. Clic en el botón de Login
     login_button = driver.find_element(By.XPATH, "//button[contains(text(), 'Login')]")
     login_button.click()
 
-    # 6. Espera para ver si inicia sesión correctamente (puedes ajustar según tu app)
     time.sleep(3)
 
     print("✅ Prueba de login completada")
@@ -41,3 +38,4 @@ except Exception as e:
     print(f"❌ Error en la prueba: {e}")
 finally:
     driver.quit()
+    shutil.rmtree(temp_profile)
