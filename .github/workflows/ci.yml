@@ -25,6 +25,7 @@ jobs:
 
     - name: Build and start containers
       run: docker compose up -d --build
+      working-directory: gestion-app
 
     - name: Esperar que la aplicación esté arriba
       run: |
@@ -36,6 +37,7 @@ jobs:
           echo "⏳ Esperando... intento $i"
           sleep 5
         done
+      working-directory: gestion-app
 
     - name: Install Python dependencies
       run: |
@@ -51,3 +53,4 @@ jobs:
     - name: Tear down containers
       if: always()
       run: docker compose down
+      working-directory: gestion-app
