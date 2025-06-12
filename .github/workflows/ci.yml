@@ -31,6 +31,21 @@ jobs:
       with:
         node-version: '18'
 
+    - name: Levantar base de datos
+      run: docker compose up -d db
+      working-directory: gestion-app
+
+    - name: Esperar a que la base esté lista
+      run: |
+        for i in {1..10}; do
+          if docker exec $(docker ps -qf name=postgres_container) pg_isready -U postgres; then
+            echo "✅ Base de datos lista"
+            break
+          fi
+          echo "⏳ Esperando base de datos... intento $i"
+          sleep 5
+        done
+
     - name: Install dependencies
       run: npm install
       working-directory: gestion-app
