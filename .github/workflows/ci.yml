@@ -14,6 +14,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Cache node_modules
+      uses: actions/cache@v3
+      with:
+        path: gestion-app/node_modules
+        key: ${{ runner.os }}-npm-${{ hashFiles('gestion-app/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-
+
     - name: Docker Compose Build
       run: docker compose build
       working-directory: gestion-app
@@ -72,6 +80,14 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
 
     - name: Levantar la app como contenedor (Next.js)
       run: docker compose up -d nextapp
