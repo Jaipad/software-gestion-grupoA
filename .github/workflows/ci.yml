@@ -26,19 +26,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-
-    - name: Levantar base de datos
-      run: docker compose up -d db
+    - name: Levantar base de datos y app
+      run: docker compose up -d db nextapp
       working-directory: gestion-app
 
-    - name: Esperar a que la base esté lista
+    - name: Esperar que la base de datos esté lista
       run: |
         for i in {1..10}; do
-          if docker exec $(docker ps -qf name=postgres_container) pg_isready -U postgres; then
+          if docker exec postgres_container pg_isready -U postgres; then
             echo "✅ Base de datos lista"
             break
           fi
@@ -46,12 +41,13 @@ jobs:
           sleep 5
         done
 
-    - name: Install dependencies
-      run: npm install
+    - name: Ejecutar pruebas unitarias (dentro del contenedor nextapp)
+      run: docker compose exec -T nextapp npm run test
       working-directory: gestion-app
 
-    - name: Run Unit Tests (Jest)
-      run: npm run test
+    - name: Tear down
+      if: always()
+      run: docker compose down
       working-directory: gestion-app
 
   integration-tests:
