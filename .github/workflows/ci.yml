@@ -83,7 +83,7 @@ jobs:
         pip install selenium webdriver-manager
 
     - name: Ejecutar pruebas de Selenium - iniciar sesión
-      run: python Pruebas_automatizadas/iniciarsesion.py
+      run: python Pruebas_automatizadas/IniciarSesion.py
 
     - name: Ejecutar pruebas de Selenium - agregar docente
       run: python Pruebas_automatizadas/Prueba_AgregarDocente.py
