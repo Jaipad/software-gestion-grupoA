@@ -23,8 +23,14 @@ jobs:
           ${{ runner.os }}-npm-
 
     - name: Docker Compose Build
-      run: docker compose build
+      run: docker compose build > build.log 2>&1
       working-directory: gestion-app
+
+    - name: Subir logs de build como artefacto
+      uses: actions/upload-artifact@v3
+      with:
+        name: logs-build
+        path: gestion-app/build.log
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -35,7 +41,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Levantar base de datos y app
-      run: docker compose up -d db nextapp
+      run: docker compose up -d db nextapp > up.log 2>&1
       working-directory: gestion-app
 
     - name: Esperar que la base de datos esté lista
@@ -47,16 +53,27 @@ jobs:
           fi
           echo "⏳ Esperando base de datos... intento $i"
           sleep 5
-        done
+        done > db_ready.log 2>&1
+      working-directory: gestion-app
 
     - name: Ejecutar pruebas unitarias (dentro del contenedor nextapp)
-      run: docker compose exec -T nextapp npm run test
+      run: docker compose exec -T nextapp npm run test > unit-tests.log 2>&1
       working-directory: gestion-app
 
     - name: Tear down
       if: always()
-      run: docker compose down
+      run: docker compose down > down.log 2>&1
       working-directory: gestion-app
+
+    - name: Subir logs de unit tests como artefactos
+      uses: actions/upload-artifact@v3
+      with:
+        name: logs-unit-tests
+        path: |
+          gestion-app/unit-tests.log
+          gestion-app/up.log
+          gestion-app/db_ready.log
+          gestion-app/down.log
 
   integration-tests:
     runs-on: ubuntu-latest
@@ -90,7 +107,7 @@ jobs:
           ${{ runner.os }}-pip-
 
     - name: Levantar la app como contenedor (Next.js)
-      run: docker compose up -d nextapp
+      run: docker compose up -d nextapp > up_integration.log 2>&1
       working-directory: gestion-app
 
     - name: Esperar que la aplicación esté levantada (Healthcheck real)
@@ -102,20 +119,32 @@ jobs:
           fi
           echo "⏳ Esperando... intento $i"
           sleep 5
-        done
+        done > app_ready.log 2>&1
 
     - name: Instalar dependencias de Python
       run: |
         python -m pip install --upgrade pip
-        pip install selenium webdriver-manager
+        pip install selenium webdriver-manager> pip_install.log 2>&1
 
     - name: Ejecutar pruebas de Selenium - iniciar sesión
-      run: python Pruebas_automatizadas/IniciarSesion.py
+      run: python Pruebas_automatizadas/IniciarSesion.py > selenium_login.log 2>&1
 
     - name: Ejecutar pruebas de Selenium - agregar docente
-      run: python Pruebas_automatizadas/Prueba_AgregarDocente.py
+      run: python Pruebas_automatizadas/Prueba_AgregarDocente.py > selenium_add_teacher.log 2>&1
 
     - name: Tear down
       if: always()
-      run: docker compose down
+      run: docker compose down > down_integration.log 2>&1
       working-directory: gestion-app
+
+    - name: Subir logs de integración como artefactos
+      uses: actions/upload-artifact@v3
+      with:
+        name: logs-integration-tests
+        path: |
+          gestion-app/up_integration.log
+          gestion-app/app_ready.log
+          gestion-app/pip_install.log
+          gestion-app/selenium_login.log
+          gestion-app/selenium_add_teacher.log
+          gestion-app/down_integration.log
