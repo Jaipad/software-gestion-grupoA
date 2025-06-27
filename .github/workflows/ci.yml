@@ -12,10 +12,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Cache node_modules
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: gestion-app/node_modules
         key: ${{ runner.os }}-npm-${{ hashFiles('gestion-app/package-lock.json') }}
@@ -27,7 +27,7 @@ jobs:
       working-directory: gestion-app
 
     - name: Subir logs de build como artefacto
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: logs-build
         path: gestion-app/build.log
@@ -38,7 +38,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Levantar base de datos y app
       run: docker compose up -d db nextapp > up.log 2>&1
@@ -66,7 +66,7 @@ jobs:
       working-directory: gestion-app
 
     - name: Subir logs de unit tests como artefactos
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: logs-unit-tests
         path: |
@@ -96,10 +96,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Cache pip
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -138,7 +138,7 @@ jobs:
       working-directory: gestion-app
 
     - name: Subir logs de integración como artefactos
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: logs-integration-tests
         path: |
